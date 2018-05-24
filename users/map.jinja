@@ -1,0 +1,16 @@
+{% set users = salt['grains.filter_by']({
+  'Debian': {
+    'sudoers_dir': '/etc/sudoers.d',
+    'sudoers_file': '/etc/sudoers',
+    'root_group': 'root',
+    'bash_package': 'bash',
+    'sudo_package': 'sudo',
+  },
+  'RedHat': {
+    'sudoers_dir': '/etc/sudoers.d',
+    'sudoers_file': '/etc/sudoers',
+    'root_group': 'root',
+    'bash_package': 'bash',
+    'sudo_package': 'sudo',
+  },
+}, default='Debian', merge=salt['pillar.get']('users_formula_defaults')) %}

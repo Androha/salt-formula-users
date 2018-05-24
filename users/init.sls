@@ -1,3 +1,41 @@
+{% from "users/map.jinja" import users with context %}
+{% set sudo_used = [] %}
+
+{% for user, data in pillar.get('users', {}).items() %}
+{% if data == None %}
+{% set data = {} %}
+{% endif %}
+{% if 'sudouser' in data and data['sudouser'] %}
+{% do sudo_used.append(1) %}
+{% endif %}
+{% endfor %}
+
+{% if sudo_used %}
+users_bash-package:
+  pkg.installed:
+    - name: {{ users.bash_package }}
+
+users_sudo-package:
+  pkg.installed:
+    - name: {{ users.sudo_package }}
+    - require:
+    - file: {{ users.sudoers_dir }}
+
+users_{{ users.sudoers_dir }}:
+  file.directory:
+    - name: {{ users.sudoers_dir }}
+
+users_sudoer-defaults:
+  file.append:
+      - name: {{ users.sudoers_file }} 
+      - require:
+        - pkg: users_sudo-package
+      - text:
+        - Defaults   env_reset
+        - Defaults   secure_path="/usr/local/sbin:/usr/local/bin:/usr/sbin:/usr/bin:/sbin:/bin"
+        - '#includedir {{ users.sudoers_dir }}'
+{% endif %}
+
 {% for user, data in pillar.get('users', {}).items() %}
 
 {% set homedir = user.get('home', "/home/%s" % user) %}
@@ -82,6 +120,21 @@ user_{{ user }}:
     - show_diff: False
     - contents_pillar: users:{{ user }}:ssh_keys:{{ key_name }}
   {% endfor %}
+{% endif %}
+
+{% set sudoers_filename = user|replace('.','_') %}
+{% if 'sudouser' in data and data['sudouser'] %}
+users_sudoer-{{ name }}:
+  file.managed:
+    - replace: False
+    - name: {{ users.sudoers_dir }}/{{ sudoers_filename }}
+    - user: root
+    - group: {{ users.root_group }}
+    - mode: '0440'
+{% else %}
+users_sudoer_absent_{{ name }}:
+  file.absent:
+    - name: {{ users.sudoers_dir }}/{{ sudoers_filename }}
 {% endif %}
 
 {% endfor %}
