@@ -80,6 +80,9 @@ user_{{ user }}:
     {% if 'uid' in data %}
     - uid: {{ data['uid'] }}
     {% endif %}
+    {% if not user.get('createhome', True) %}
+    - createhome: False
+    {% endif %}
     - groups:
       - {{ user_group }}
       {% for group in data.get('groups', []) %}
