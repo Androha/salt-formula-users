@@ -7,7 +7,7 @@ users_formula_defaults: \# Overwrite the defaults from map.jinja\
   sudoers_file: /etc/sudoers\
   root_group: root\
   bash_package: bash\
-  sudo_package': sudo\
+  sudo_package: sudo\
 \
 users:\
   user1: \# The name of the user\

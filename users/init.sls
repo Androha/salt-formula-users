@@ -15,15 +15,15 @@ users_bash-package:
   pkg.installed:
     - name: {{ users.bash_package }}
 
+users_{{ users.sudoers_dir }}:
+  file.directory:
+    - name: {{ users.sudoers_dir }}
+
 users_sudo-package:
   pkg.installed:
     - name: {{ users.sudo_package }}
     - require:
-    - file: {{ users.sudoers_dir }}
-
-users_{{ users.sudoers_dir }}:
-  file.directory:
-    - name: {{ users.sudoers_dir }}
+      - file: {{ users.sudoers_dir }}
 
 users_sudoer-defaults:
   file.append:
@@ -56,8 +56,15 @@ user_{{ user }}_group_{{ group }}:
 {% endfor %}
 
 user_{{ user }}:
+  group.present:
+    - name: {{ user_group }}
+    {% if 'prime_group' in data and 'gid' in data['prime_group'] %}
+    - gid: {{ data['prime_group']['gid'] }}
+    {% elif 'uid' in data %}
+    - gid: {{ data['uid'] }}
+    {% endif %}
   {% if data.get('createhome', True) %}
-  file.directory
+  file.directory:
     - name: {{ homedir }}
     - user: {{ user }}
     - group: {{ user_group }}
@@ -67,13 +74,6 @@ user_{{ user }}:
       - user: user_{{ user }}
       - group: {{ user_group }}
   {% endif %}
-  group.present:
-    - name: {{ user_group }}
-    {% if 'prime_group' in data and 'gid' in data['prime_group'] %}
-    - gid: {{ data['prime_group']['gid'] }}
-    {% elif 'uid' in data %}
-    - gid: {{ data['uid'] }}
-    {% endif %}
   user.present:
     - name: {{ user }}
     - home: {{ homedir }}
@@ -100,7 +100,7 @@ user_{{ user }}:
     - name: {{ homedir }}/.ssh
     - user: {{ user }}
     - group: {{ user_group }}
-    - dir_mode 0700
+    - dir_mode: 0700
     - makedirs: True
     - require:
       - user: {{ user }}
@@ -122,12 +122,12 @@ user_{{ user }}:
   file.managed:
     - name: {{ homedir }}/.ssh/{{ key_name }}
     - user: {{ user }}
-        - group: {{ user_group }}
-      {% if key_name.endswith(".pub") %}
+    - group: {{ user_group }}
+    {% if key_name.endswith(".pub") %}
     - mode: 644
-      {% else %}
+    {% else %}
     - mode: 600
-      {% endif %}
+    {% endif %}
     - show_diff: False
     - contents_pillar: users:{{ user }}:ssh_keys:{{ key_name }}
   {% endfor %}
@@ -139,7 +139,7 @@ ssh_auth_{{ user }}_{{ loop.index0 }}:
   ssh_auth.present:
     - user: {{ user }}
     - name: {{ auth_key }}
-  {% endif %}
+  {% endfor %}
 {% endif %}
 
 {% set sudoers_filename = user|replace('.','_') %}
