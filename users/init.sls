@@ -94,7 +94,7 @@ user_{{ user }}:
       - group: {{ group }}
       {% endfor %}
 
-{% if 'ssh_keys' in data or 'ssh_key_folder' in data %}
+{% if 'ssh_keys' in data or 'ssh_key_folder' in data or 'ssh_auth' in data %}
 {{ user }}_keydir:
   file.directory:
     - name: {{ homedir }}/.ssh
@@ -131,6 +131,15 @@ user_{{ user }}:
     - show_diff: False
     - contents_pillar: users:{{ user }}:ssh_keys:{{ key_name }}
   {% endfor %}
+{% endif %}
+
+{% if 'ssh_auth' in data %}
+  {% for auth_key in data['ssh_auth'] %}
+ssh_auth_{{ user }}_{{ loop.index0 }}:
+  ssh_auth.present:
+    - user: {{ user }}
+    - name: {{ auth_key }}
+  {% endif %}
 {% endif %}
 
 {% set sudoers_filename = user|replace('.','_') %}

@@ -21,6 +21,8 @@ users:\
       \- group1\
       \- sudo\
     sudouser: True\
+    ssh_auth:
+      - PUBLIC_KEY \# The list of authorized public keys\
     ssh_key_folder: salt://SSH_DIR \# Files from this directory will be copied into .SSH/ directory of the user\
     ssh_keys: \# Keyname is used as a file name in .SSH/ directory\
       key1: your_private_key\
