@@ -94,21 +94,29 @@ user_{{ user }}:
       - group: {{ group }}
       {% endfor %}
 
-{% if 'ssh_keys' in data %}
+{% if 'ssh_keys' in data or 'ssh_key_folder' in data %}
 {{ user }}_keydir:
   file.directory:
     - name: {{ homedir }}/.ssh
     - user: {{ user }}
-    - user: {{ user_group }}
+    - group: {{ user_group }}
     - dir_mode 0700
     - makedirs: True
-        - require:
+    - require:
       - user: {{ user }}
       - group: {{ user_group }}
-      {% for group in data.get('groups', []) %}
-      - group: {{ group }}
-      {% endfor %}
+{% endif %}
 
+{% if 'ssh_key_folder' in data %}
+{{ user }}_key_folder_copy_{{ ssh_key_folder }}:
+  file.recurse:
+    - name: {{ homedir }}/.ssh
+    - source: {{ ssh_key_folder }}
+    - user: {{ user }}
+    - group: {{ user_group }}
+{% endif %}
+
+{% if 'ssh_keys' in data %}
   {% for key_name in data.ssh_keys.keys() %}
 {{ user }}_key_{{ key_name }}:
   file.managed:
@@ -127,7 +135,7 @@ user_{{ user }}:
 
 {% set sudoers_filename = user|replace('.','_') %}
 {% if 'sudouser' in data and data['sudouser'] %}
-users_sudoer-{{ name }}:
+users_sudoer_{{ name }}:
   file.managed:
     - replace: False
     - name: {{ users.sudoers_dir }}/{{ sudoers_filename }}
