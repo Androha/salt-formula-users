@@ -86,7 +86,7 @@ user_{{ user }}:
     - groups:
       - {{ user_group }}
       {% for group in data.get('groups', []) %}
-      - group: {{ group }}
+      - {{ group }}
       {% endfor %}
     - require:
       - group: {{ user_group }}
