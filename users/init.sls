@@ -2,9 +2,6 @@
 {% set sudo_used = [] %}
 
 {% for user, data in pillar.get('users', {}).items() %}
-{% if data == None %}
-{% set data = {} %}
-{% endif %}
 {% if 'sudouser' in data and data['sudouser'] %}
 {% do sudo_used.append(1) %}
 {% endif %}
