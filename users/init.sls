@@ -38,7 +38,7 @@ users_sudoer-defaults:
 
 {% for user, data in pillar.get('users', {}).items() %}
 
-{% set homedir = user.get('home', "/home/%s" % user) %}
+{% set homedir = data.get('home', "/home/%s" % user) %}
 
 {% if 'prime_group' in data and 'name' in data['prime_group'] %}
 {% set user_group = data.prime_group.name %}
