@@ -2,12 +2,13 @@
 ### Formula to configure users using pillar.
 ## Example of the pillar:
 
-users_formula_defaults: \# Overwrite the defaults from map.jinja\
-  sudoers_dir: /etc/sudoers.d\
-  sudoers_file: /etc/sudoers\
-  root_group: root\
-  bash_package: bash\
-  sudo_package: sudo\
+users-formula:
+  defaults: \# Overwrite the defaults from map.jinja\
+    sudoers_dir: /etc/sudoers.d\
+    sudoers_file: /etc/sudoers\
+    root_group: root\
+    bash_package: bash\
+    sudo_package: sudo\
 \
 users:\
   user1: \# The name of the user\
