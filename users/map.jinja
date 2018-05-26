@@ -13,4 +13,11 @@
     'bash_package': 'bash',
     'sudo_package': 'sudo',
   },
-}, default='Debian', merge=salt['pillar.get']('users-formula:defaults')) %}
+  'default': {
+    'sudoers_dir': '/etc/sudoers.d',
+    'sudoers_file': '/etc/sudoers',
+    'root_group': 'root',
+    'bash_package': 'bash',
+    'sudo_package': 'sudo',
+  },
+}, merge=salt['pillar.get']('users-formula:defaults')) %}
