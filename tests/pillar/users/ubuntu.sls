@@ -1,3 +1,6 @@
+users_formula_defaults:
+  sudoers_dir: /etc/sudoers.d
+
 users:
   canonical:
     home: /home/canonical
