@@ -1,5 +1,6 @@
-users_formula_defaults:
-  sudoers_dir: /etc/sudoers.d
+users-formula:
+  defaults:
+    sudoers_dir: /etc/sudoers.d
 
 users:
   redhat:
