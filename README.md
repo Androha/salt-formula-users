@@ -23,7 +23,7 @@ users:\
     sudouser: True\
     ssh_auth:
       - PUBLIC_KEY \# The list of authorized public keys\
-    ssh_key_folder: salt://SSH_DIR \# Files from this directory will be copied into .SSH/ directory of the user\
+    ssh_prv_key: salt://SSH_KEY \# The contents of this file will be copied to .ssh/key.pem\
     ssh_keys: \# Keyname is used as a file name in .SSH/ directory\
       key1: your_private_key\
       key2.pub: your_public_key \# Make sure your public key names end with .pub\

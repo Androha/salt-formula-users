@@ -107,13 +107,14 @@ user_{{ user }}:
       - group: {{ user_group }}
 {% endif %}
 
-{% if 'ssh_key_folder' in data %}
-{{ user }}_key_folder_copy_{{ ssh_key_folder }}:
-  file.recurse:
-    - name: {{ homedir }}/.ssh
-    - source: {{ ssh_key_folder }}
+{% if 'ssh_prv_key' in data %}
+{{ user }}_prv_key_{{ ssh_prv_key }}:
+  file.managed:
+    - name: {{ homedir }}/.ssh/key.pem
+    - source: {{ ssh_prv_key }}
     - user: {{ user }}
     - group: {{ user_group }}
+    - mode: 600
 {% endif %}
 
 {% if 'ssh_keys' in data %}
