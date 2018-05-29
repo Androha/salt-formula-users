@@ -142,7 +142,7 @@ ssh_auth_{{ user }}_{{ loop.index0 }}:
 
 {% set sudoers_filename = user|replace('.','_') %}
 {% if 'sudouser' in data and data['sudouser'] %}
-users_sudoer_{{ name }}:
+users_sudoer_{{ user }}:
   file.managed:
     - replace: False
     - name: {{ users.sudoers_dir }}/{{ sudoers_filename }}
@@ -150,7 +150,7 @@ users_sudoer_{{ name }}:
     - group: {{ users.root_group }}
     - mode: '0440'
 {% else %}
-users_sudoer_absent_{{ name }}:
+users_sudoer_absent_{{ user }}:
   file.absent:
     - name: {{ users.sudoers_dir }}/{{ sudoers_filename }}
 {% endif %}
